@@ -2,7 +2,6 @@ import { Building2, MapPin, Calendar, Trash2 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ACCOMMODATION_TYPE_LABELS } from '@/lib/constants'
 import { formatDate, formatCurrency } from '@/lib/formatters'
 import type { Accommodation } from '@/types'
 
@@ -23,28 +22,31 @@ export function AccommodationCard({ accommodation, onDelete }: AccommodationCard
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <h4 className="font-semibold">{accommodation.name}</h4>
-                <Badge variant="secondary" className="text-xs">
-                  {ACCOMMODATION_TYPE_LABELS[accommodation.accommodation_type]}
-                </Badge>
+                {accommodation.type && (
+                  <Badge variant="secondary" className="text-xs capitalize">
+                    {accommodation.type}
+                  </Badge>
+                )}
               </div>
-              <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                <Calendar className="size-3.5" />
-                <span>{formatDate(accommodation.check_in)} - {formatDate(accommodation.check_out)}</span>
-              </div>
+              {(accommodation.check_in || accommodation.check_out) && (
+                <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                  <Calendar className="size-3.5" />
+                  <span>
+                    {accommodation.check_in ? formatDate(accommodation.check_in) : '?'}
+                    {' - '}
+                    {accommodation.check_out ? formatDate(accommodation.check_out) : '?'}
+                  </span>
+                </div>
+              )}
               {accommodation.address && (
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <MapPin className="size-3.5" />
                   <span>{accommodation.address}</span>
                 </div>
               )}
-              {accommodation.total_cost != null && accommodation.total_cost > 0 && (
+              {accommodation.cost_per_night != null && accommodation.cost_per_night > 0 && (
                 <p className="text-sm font-medium">
-                  {formatCurrency(accommodation.total_cost, accommodation.currency || 'USD')}
-                  {accommodation.cost_per_night != null && (
-                    <span className="text-muted-foreground font-normal">
-                      {' '}({formatCurrency(accommodation.cost_per_night, accommodation.currency || 'USD')}/night)
-                    </span>
-                  )}
+                  {formatCurrency(accommodation.cost_per_night, accommodation.currency)}/night
                 </p>
               )}
             </div>

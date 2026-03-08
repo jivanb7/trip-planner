@@ -1,23 +1,22 @@
-import { Star, Trash2 } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { PACKING_CATEGORY_LABELS } from '@/lib/constants'
-import type { PackingItem, PackingCategory } from '@/types'
+import type { PackingItem } from '@/types'
 
 interface PackingCategoryGroupProps {
-  category: PackingCategory
+  category: string
   items: PackingItem[]
   onToggle: (id: string, isPacked: boolean) => void
   onDelete: (id: string) => void
 }
 
 export function PackingCategoryGroup({ category, items, onToggle, onDelete }: PackingCategoryGroupProps) {
-  const packedCount = items.filter((i) => i.is_packed).length
+  const packedCount = items.filter((i) => i.packed).length
 
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <h4 className="font-medium text-sm">
-          {PACKING_CATEGORY_LABELS[category]}
+        <h4 className="font-medium text-sm capitalize">
+          {category}
           <span className="text-xs text-muted-foreground ml-2">
             {packedCount}/{items.length}
           </span>
@@ -32,17 +31,16 @@ export function PackingCategoryGroup({ category, items, onToggle, onDelete }: Pa
             <label className="flex items-center gap-2 cursor-pointer flex-1">
               <input
                 type="checkbox"
-                checked={item.is_packed}
-                onChange={() => onToggle(item.id, !item.is_packed)}
+                checked={item.packed}
+                onChange={() => onToggle(item.id, !item.packed)}
                 className="size-4 rounded border-input accent-primary"
               />
-              <span className={`text-sm ${item.is_packed ? 'line-through text-muted-foreground' : ''}`}>
+              <span className={`text-sm ${item.packed ? 'line-through text-muted-foreground' : ''}`}>
                 {item.name}
                 {item.quantity > 1 && (
                   <span className="text-xs text-muted-foreground ml-1">x{item.quantity}</span>
                 )}
               </span>
-              {item.is_essential && <Star className="size-3 text-amber-500 fill-amber-500" />}
             </label>
             <Button
               variant="ghost"

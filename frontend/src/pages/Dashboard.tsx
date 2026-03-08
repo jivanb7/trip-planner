@@ -8,7 +8,7 @@ import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { useTrips } from '@/hooks/useTrips'
-import { TRIP_STATUS_LABELS, TRIP_STATUS_COLORS, TRIP_TYPE_LABELS } from '@/lib/constants'
+import { TRIP_STATUS_LABELS, TRIP_STATUS_COLORS } from '@/lib/constants'
 import { formatDateRange, formatCurrency, getPercentage } from '@/lib/formatters'
 import type { Trip } from '@/types'
 
@@ -33,7 +33,7 @@ const itemVariants = {
 
 function TripCard({ trip }: { trip: Trip }) {
   const budgetUsed = 0 // Will be computed from summary endpoint when available
-  const percentage = getPercentage(budgetUsed, trip.budget)
+  const percentage = getPercentage(budgetUsed, trip.budget ?? 0)
 
   return (
     <motion.div variants={itemVariants}>
@@ -43,18 +43,18 @@ function TripCard({ trip }: { trip: Trip }) {
             <div className="flex items-start justify-between">
               <div className="space-y-1">
                 <h3 className="font-semibold text-lg leading-tight group-hover:text-primary transition-colors">
-                  {trip.destination}
+                  {trip.name}
                 </h3>
                 <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                   <MapPin className="size-3.5" />
-                  <span>{trip.country}</span>
+                  <span>{trip.destination}</span>
                 </div>
               </div>
               <Badge
                 variant="secondary"
-                className={TRIP_STATUS_COLORS[trip.status]}
+                className={TRIP_STATUS_COLORS[trip.status] ?? ''}
               >
-                {TRIP_STATUS_LABELS[trip.status]}
+                {TRIP_STATUS_LABELS[trip.status] ?? trip.status}
               </Badge>
             </div>
           </CardHeader>
@@ -62,12 +62,7 @@ function TripCard({ trip }: { trip: Trip }) {
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1.5">
                 <Calendar className="size-3.5" />
-                <span>{formatDateRange(trip.start_date, trip.end_date)}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs px-1.5 py-0.5 rounded bg-secondary">
-                  {TRIP_TYPE_LABELS[trip.trip_type]}
-                </span>
+                <span>{formatDateRange(trip.start_date ?? '', trip.end_date ?? '')}</span>
               </div>
             </div>
             <div className="space-y-1.5">
@@ -77,10 +72,10 @@ function TripCard({ trip }: { trip: Trip }) {
                   <span>Budget</span>
                 </div>
                 <span className="font-medium">
-                  {formatCurrency(trip.budget, trip.currency)}
+                  {trip.budget != null ? formatCurrency(trip.budget, trip.currency) : 'Not set'}
                 </span>
               </div>
-              <Progress value={percentage} className="h-1.5" />
+              {trip.budget != null && <Progress value={percentage} className="h-1.5" />}
             </div>
           </CardContent>
         </Card>

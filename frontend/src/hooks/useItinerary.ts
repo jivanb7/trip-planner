@@ -56,7 +56,7 @@ export function useDeleteItineraryItem(tripId: string) {
 export function useReorderItinerary(tripId: string) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (items: Array<{ id: string; day_number: number; position: number }>) =>
+    mutationFn: (items: Array<{ id: string; sort_order: number }>) =>
       itineraryApi.reorder(tripId, { items }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trips', tripId, 'itinerary'] })

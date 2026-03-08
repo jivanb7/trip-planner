@@ -8,7 +8,6 @@ import { useActivities } from '@/hooks/useActivities'
 import { useAccommodations } from '@/hooks/useAccommodations'
 import { useWeather } from '@/hooks/useWeather'
 import { formatCurrency, formatDate, getPercentage } from '@/lib/formatters'
-import { ACTIVITY_TYPE_LABELS } from '@/lib/constants'
 import type { Trip } from '@/types'
 
 interface OverviewTabProps {
@@ -49,24 +48,26 @@ export function OverviewTab({ tripId, trip }: OverviewTabProps) {
             <div className="space-y-3">
               <div>
                 <p className="text-2xl font-bold">
-                  {formatCurrency(budget.remaining, budget.currency)}
+                  {budget.budget_remaining_usd != null
+                    ? formatCurrency(budget.budget_remaining_usd, budget.currency)
+                    : 'N/A'}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  remaining of {formatCurrency(budget.budget, budget.currency)}
+                  remaining of {budget.budget != null ? formatCurrency(budget.budget, budget.currency) : 'no budget set'}
                 </p>
               </div>
               <Progress
-                value={getPercentage(budget.total_spent, budget.budget)}
+                value={getPercentage(budget.total_spent_usd, budget.budget ?? 0)}
                 className="h-2"
               />
               <p className="text-xs text-muted-foreground">
-                {formatCurrency(budget.total_spent, budget.currency)} spent
+                {formatCurrency(budget.total_spent_usd, budget.currency)} spent
               </p>
             </div>
           ) : (
             <div className="space-y-3">
               <p className="text-2xl font-bold">
-                {formatCurrency(trip.budget, trip.currency)}
+                {trip.budget != null ? formatCurrency(trip.budget, trip.currency) : 'Not set'}
               </p>
               <p className="text-xs text-muted-foreground">No expenses tracked yet</p>
               <Progress value={0} className="h-2" />
@@ -88,9 +89,11 @@ export function OverviewTab({ tripId, trip }: OverviewTabProps) {
             <div className="space-y-2">
               <p className="font-semibold">{nextActivity.name}</p>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Badge variant="secondary" className="text-xs">
-                  {ACTIVITY_TYPE_LABELS[nextActivity.activity_type]}
-                </Badge>
+                {nextActivity.category && (
+                  <Badge variant="secondary" className="text-xs capitalize">
+                    {nextActivity.category}
+                  </Badge>
+                )}
                 {nextActivity.date && <span>{formatDate(nextActivity.date)}</span>}
               </div>
               {nextActivity.location && (
@@ -119,7 +122,9 @@ export function OverviewTab({ tripId, trip }: OverviewTabProps) {
             <div className="space-y-2">
               <p className="font-semibold">{currentAccommodation.name}</p>
               <p className="text-sm text-muted-foreground">
-                {formatDate(currentAccommodation.check_in)} - {formatDate(currentAccommodation.check_out)}
+                {currentAccommodation.check_in ? formatDate(currentAccommodation.check_in) : '?'}
+                {' - '}
+                {currentAccommodation.check_out ? formatDate(currentAccommodation.check_out) : '?'}
               </p>
               {currentAccommodation.address && (
                 <p className="text-xs text-muted-foreground">{currentAccommodation.address}</p>
@@ -145,9 +150,9 @@ export function OverviewTab({ tripId, trip }: OverviewTabProps) {
               {upcomingWeather.map((w) => (
                 <div key={w.id} className="flex-1 text-center space-y-1">
                   <p className="text-xs text-muted-foreground">{formatDate(w.date)}</p>
-                  <p className="text-sm font-medium">{w.condition}</p>
-                  <p className="text-lg font-bold">{w.temperature_high}°</p>
-                  <p className="text-xs text-muted-foreground">{w.temperature_low}°</p>
+                  <p className="text-sm font-medium">{w.condition ?? 'Unknown'}</p>
+                  {w.high_temp != null && <p className="text-lg font-bold">{w.high_temp}°</p>}
+                  {w.low_temp != null && <p className="text-xs text-muted-foreground">{w.low_temp}°</p>}
                 </div>
               ))}
             </div>
@@ -157,8 +162,8 @@ export function OverviewTab({ tripId, trip }: OverviewTabProps) {
         </CardContent>
       </Card>
 
-      {/* Trip Notes */}
-      {trip.notes && (
+      {/* Trip Description */}
+      {trip.description && (
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -167,7 +172,7 @@ export function OverviewTab({ tripId, trip }: OverviewTabProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{trip.notes}</p>
+            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{trip.description}</p>
           </CardContent>
         </Card>
       )}

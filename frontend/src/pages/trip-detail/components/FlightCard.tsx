@@ -1,6 +1,5 @@
 import { Plane, ArrowRight, Trash2 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatTime, formatCurrency } from '@/lib/formatters'
 import type { Flight } from '@/types'
@@ -26,16 +25,21 @@ export function FlightCard({ flight, onDelete }: FlightCardProps) {
                 <span className="font-semibold">{flight.arrival_airport}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span>{flight.airline} {flight.flight_number}</span>
-                {flight.seat && <Badge variant="outline" className="text-xs">{flight.seat}</Badge>}
+                <span>
+                  {[flight.airline, flight.flight_number].filter(Boolean).join(' ')}
+                </span>
               </div>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right text-sm">
-              <p>{formatTime(flight.departure_time)} - {formatTime(flight.arrival_time)}</p>
+              <p>
+                {flight.departure_time ? formatTime(flight.departure_time) : '?'}
+                {' - '}
+                {flight.arrival_time ? formatTime(flight.arrival_time) : '?'}
+              </p>
               {flight.cost != null && flight.cost > 0 && (
-                <p className="text-muted-foreground">{formatCurrency(flight.cost, flight.currency || 'USD')}</p>
+                <p className="text-muted-foreground">{formatCurrency(flight.cost, flight.currency)}</p>
               )}
             </div>
             {onDelete && (
@@ -51,9 +55,9 @@ export function FlightCard({ flight, onDelete }: FlightCardProps) {
             )}
           </div>
         </div>
-        {flight.booking_reference && (
+        {flight.confirmation_number && (
           <p className="mt-2 text-xs text-muted-foreground">
-            Booking: {flight.booking_reference}
+            Confirmation: {flight.confirmation_number}
           </p>
         )}
       </CardContent>

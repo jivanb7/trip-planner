@@ -22,23 +22,19 @@ export function WeatherDayCard({ weather }: WeatherDayCardProps) {
     <Card>
       <CardContent className="p-4 text-center space-y-2">
         <p className="text-sm font-medium text-muted-foreground">{formatDate(weather.date)}</p>
-        <div className="flex justify-center">{getWeatherIcon(weather.condition)}</div>
-        <p className="text-sm font-medium capitalize">{weather.condition}</p>
+        <div className="flex justify-center">
+          {weather.condition ? getWeatherIcon(weather.condition) : <Sun className="size-8 text-yellow-500" />}
+        </div>
+        <p className="text-sm font-medium capitalize">{weather.condition ?? 'Unknown'}</p>
         <div className="flex items-center justify-center gap-2">
-          <span className="text-lg font-bold">{weather.temperature_high}°</span>
-          <span className="text-sm text-muted-foreground">{weather.temperature_low}°</span>
+          {weather.high_temp != null && <span className="text-lg font-bold">{weather.high_temp}°</span>}
+          {weather.low_temp != null && <span className="text-sm text-muted-foreground">{weather.low_temp}°</span>}
         </div>
         <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground">
-          {weather.rain_chance != null && (
+          {weather.precipitation_chance != null && (
             <div className="flex items-center gap-1">
               <Droplets className="size-3" />
-              <span>{weather.rain_chance}%</span>
-            </div>
-          )}
-          {weather.uv_index != null && (
-            <div className="flex items-center gap-1">
-              <Sun className="size-3" />
-              <span>UV {weather.uv_index}</span>
+              <span>{weather.precipitation_chance}%</span>
             </div>
           )}
           {weather.wind_speed != null && (

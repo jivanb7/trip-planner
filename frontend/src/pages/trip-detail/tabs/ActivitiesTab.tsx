@@ -24,7 +24,7 @@ export function ActivitiesTab({ tripId }: ActivitiesTabProps) {
 
   const filtered = activities?.filter((a) => {
     const matchesSearch = a.name.toLowerCase().includes(search.toLowerCase())
-    const matchesType = typeFilter === 'all' || a.activity_type === typeFilter
+    const matchesType = typeFilter === 'all' || a.category === typeFilter
     return matchesSearch && matchesType
   })
 

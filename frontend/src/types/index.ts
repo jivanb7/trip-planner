@@ -1,46 +1,40 @@
 export interface Trip {
   id: string
+  name: string
   destination: string
-  country: string
-  start_date: string
-  end_date: string
-  budget: number
+  start_date: string | null
+  end_date: string | null
+  description: string | null
+  budget: number | null
   currency: string
-  trip_type: TripType
   status: TripStatus
-  notes: string | null
   created_at: string
   updated_at: string
 }
 
-export type TripType = 'leisure' | 'business' | 'adventure' | 'cultural' | 'romantic' | 'family' | 'solo' | 'group'
-export type TripStatus = 'planning' | 'booked' | 'in_progress' | 'completed' | 'cancelled'
+export type TripStatus = 'planning' | 'active' | 'completed' | 'cancelled'
 
 export interface Activity {
   id: string
   trip_id: string
   name: string
   description: string | null
-  activity_type: ActivityType
+  category: string | null
   date: string | null
   start_time: string | null
   end_time: string | null
-  duration_minutes: number | null
   cost: number | null
-  currency: string | null
-  cost_usd: number | null
+  currency: string
   location: string | null
   latitude: number | null
   longitude: number | null
   booking_url: string | null
-  difficulty: DifficultyLevel | null
   notes: string | null
   created_at: string
   updated_at: string
 }
 
-export type ActivityType = 'sightseeing' | 'dining' | 'shopping' | 'entertainment' | 'outdoor' | 'cultural' | 'relaxation' | 'nightlife' | 'sports' | 'other'
-export type DifficultyLevel = 'easy' | 'moderate' | 'challenging' | 'extreme'
+export type ActivityType = 'sightseeing' | 'food' | 'adventure' | 'shopping' | 'relaxation' | 'nightlife' | 'cultural' | 'transport' | 'other'
 
 export interface Expense {
   id: string
@@ -62,16 +56,14 @@ export interface Accommodation {
   id: string
   trip_id: string
   name: string
-  accommodation_type: AccommodationType
+  type: string | null
   address: string | null
   latitude: number | null
   longitude: number | null
-  check_in: string
-  check_out: string
+  check_in: string | null
+  check_out: string | null
   cost_per_night: number | null
-  currency: string | null
-  total_cost: number | null
-  total_cost_usd: number | null
+  currency: string
   booking_url: string | null
   confirmation_number: string | null
   notes: string | null
@@ -84,17 +76,16 @@ export type AccommodationType = 'hotel' | 'hostel' | 'airbnb' | 'resort' | 'apar
 export interface Flight {
   id: string
   trip_id: string
-  airline: string
-  flight_number: string
+  airline: string | null
+  flight_number: string | null
   departure_airport: string
   arrival_airport: string
-  departure_time: string
-  arrival_time: string
+  departure_time: string | null
+  arrival_time: string | null
   cost: number | null
-  currency: string | null
-  cost_usd: number | null
-  booking_reference: string | null
-  seat: string | null
+  currency: string
+  confirmation_number: string | null
+  booking_url: string | null
   notes: string | null
   created_at: string
   updated_at: string
@@ -103,35 +94,34 @@ export interface Flight {
 export interface Transport {
   id: string
   trip_id: string
-  transport_type: TransportType
-  from_location: string
-  to_location: string
+  type: string
+  description: string | null
+  from_location: string | null
+  to_location: string | null
   departure_time: string | null
   arrival_time: string | null
   cost: number | null
-  currency: string | null
-  cost_usd: number | null
-  booking_reference: string | null
+  currency: string
+  confirmation_number: string | null
   notes: string | null
   created_at: string
   updated_at: string
 }
 
-export type TransportType = 'train' | 'bus' | 'taxi' | 'uber' | 'rental_car' | 'ferry' | 'subway' | 'tram' | 'bike' | 'walking' | 'other'
+export type TransportType = 'train' | 'bus' | 'taxi' | 'rideshare' | 'rental_car' | 'ferry' | 'subway' | 'other'
 
 export interface ItineraryItem {
   id: string
   trip_id: string
-  day_number: number
-  position: number
-  title: string
-  description: string | null
+  date: string
   start_time: string | null
   end_time: string | null
+  title: string
+  description: string | null
   location: string | null
-  item_type: ItineraryItemType
-  linked_activity_id: string | null
-  linked_transport_id: string | null
+  category: string | null
+  sort_order: number
+  cost: number | null
   notes: string | null
   created_at: string
   updated_at: string
@@ -142,46 +132,30 @@ export type ItineraryItemType = 'activity' | 'transport' | 'meal' | 'rest' | 'fr
 export interface TravelInfo {
   id: string
   trip_id: string
-  visa_required: boolean | null
-  visa_type: string | null
-  visa_notes: string | null
+  visa_requirements: string | null
+  vaccination_info: string | null
+  travel_insurance: string | null
   local_currency: string | null
-  exchange_rate: number | null
   language: string | null
-  useful_phrases: UsefulPhrase[] | null
-  plug_type: string | null
-  voltage: string | null
-  emergency_numbers: EmergencyNumbers | null
-  safety_rating: string | null
-  safety_notes: string | null
+  timezone: string | null
+  power_outlet: string | null
+  emergency_numbers: Record<string, string> | null
+  useful_phrases: Record<string, string> | null
+  notes: string | null
   created_at: string
   updated_at: string
-}
-
-export interface UsefulPhrase {
-  phrase: string
-  translation: string
-}
-
-export interface EmergencyNumbers {
-  police: string | null
-  ambulance: string | null
-  fire: string | null
-  tourist_police: string | null
 }
 
 export interface WeatherInfo {
   id: string
   trip_id: string
   date: string
-  condition: string
-  temperature_high: number
-  temperature_low: number
+  condition: string | null
+  high_temp: number | null
+  low_temp: number | null
   humidity: number | null
-  rain_chance: number | null
-  uv_index: number | null
+  precipitation_chance: number | null
   wind_speed: number | null
-  notes: string | null
   created_at: string
   updated_at: string
 }
@@ -190,11 +164,9 @@ export interface PackingItem {
   id: string
   trip_id: string
   name: string
-  category: PackingCategory
+  category: string
   quantity: number
-  is_packed: boolean
-  is_essential: boolean
-  notes: string | null
+  packed: boolean
   created_at: string
   updated_at: string
 }
@@ -202,55 +174,61 @@ export interface PackingItem {
 export type PackingCategory = 'clothing' | 'toiletries' | 'electronics' | 'documents' | 'medication' | 'accessories' | 'footwear' | 'gear' | 'snacks' | 'other'
 
 // API response types
-export interface TripSummary extends Trip {
+export interface TripSummary {
+  trip: Trip
   activity_count: number
   expense_count: number
   accommodation_count: number
   flight_count: number
-  total_spent: number
-  budget_remaining: number
+  transport_count: number
+  itinerary_item_count: number
+  packing_item_count: number
+  total_spent_usd: number
+  budget_remaining_usd: number | null
 }
 
 export interface BudgetInfo {
-  budget: number
-  total_spent: number
-  remaining: number
+  budget: number | null
   currency: string
+  total_spent_usd: number
+  budget_remaining_usd: number | null
+}
+
+export interface ExpenseCategorySummary {
+  category: string
+  total_usd: number
+  count: number
 }
 
 export interface ExpenseSummary {
-  by_category: Record<ExpenseCategory, number>
-  total: number
-  currency: string
+  categories: ExpenseCategorySummary[]
+  grand_total_usd: number
 }
 
 // Form types
 export interface TripCreateForm {
+  name: string
   destination: string
-  country: string
   start_date: string
   end_date: string
   budget: number
   currency: string
-  trip_type: TripType
-  notes: string
+  description: string
 }
 
 export interface ActivityCreateForm {
   name: string
   description: string
-  activity_type: ActivityType
+  category: string
   date: string
   start_time: string
   end_time: string
-  duration_minutes: number | null
   cost: number | null
   currency: string
   location: string
   latitude: number | null
   longitude: number | null
   booking_url: string
-  difficulty: DifficultyLevel | null
   notes: string
 }
 

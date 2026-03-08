@@ -5,7 +5,6 @@ import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { ItineraryDayGroup } from '../components/ItineraryDayGroup'
 import { useItinerary, useReorderItinerary } from '@/hooks/useItinerary'
-import { getDayCount } from '@/lib/formatters'
 import type { Trip } from '@/types'
 
 interface ItineraryTabProps {
@@ -13,11 +12,9 @@ interface ItineraryTabProps {
   trip: Trip
 }
 
-export function ItineraryTab({ tripId, trip }: ItineraryTabProps) {
+export function ItineraryTab({ tripId }: ItineraryTabProps) {
   const { data: items, isLoading } = useItinerary(tripId)
   const reorder = useReorderItinerary(tripId)
-
-  const dayCount = getDayCount(trip.start_date, trip.end_date)
 
   if (isLoading) return <LoadingSpinner className="py-16" text="Loading itinerary..." />
 
@@ -31,15 +28,12 @@ export function ItineraryTab({ tripId, trip }: ItineraryTabProps) {
     )
   }
 
-  // Group items by day
-  const dayGroups = new Map<number, typeof items>()
-  for (let d = 1; d <= dayCount; d++) {
-    dayGroups.set(d, [])
-  }
+  // Group items by date
+  const dayGroups = new Map<string, typeof items>()
   for (const item of items) {
-    const existing = dayGroups.get(item.day_number) || []
+    const existing = dayGroups.get(item.date) || []
     existing.push(item)
-    dayGroups.set(item.day_number, existing)
+    dayGroups.set(item.date, existing)
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -48,18 +42,17 @@ export function ItineraryTab({ tripId, trip }: ItineraryTabProps) {
 
     const allItems = items.map((item) => ({
       id: item.id,
-      day_number: item.day_number,
-      position: item.position,
+      sort_order: item.sort_order,
     }))
 
-    // Swap positions
+    // Swap sort_order
     const activeIdx = allItems.findIndex((i) => i.id === active.id)
     const overIdx = allItems.findIndex((i) => i.id === over.id)
     if (activeIdx === -1 || overIdx === -1) return
 
-    const temp = allItems[activeIdx].position
-    allItems[activeIdx].position = allItems[overIdx].position
-    allItems[overIdx].position = temp
+    const temp = allItems[activeIdx].sort_order
+    allItems[activeIdx].sort_order = allItems[overIdx].sort_order
+    allItems[overIdx].sort_order = temp
 
     reorder.mutate(allItems)
   }
@@ -68,14 +61,14 @@ export function ItineraryTab({ tripId, trip }: ItineraryTabProps) {
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <div className="space-y-6">
         {Array.from(dayGroups.entries())
-          .filter(([, dayItems]) => dayItems.length > 0)
-          .map(([dayNumber, dayItems]) => (
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([date, dayItems]) => (
             <SortableContext
-              key={dayNumber}
+              key={date}
               items={dayItems.map((i) => i.id)}
               strategy={verticalListSortingStrategy}
             >
-              <ItineraryDayGroup dayNumber={dayNumber} items={dayItems} />
+              <ItineraryDayGroup date={date} items={dayItems} />
             </SortableContext>
           ))}
       </div>

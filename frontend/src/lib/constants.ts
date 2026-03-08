@@ -1,50 +1,29 @@
-import type { TripType, TripStatus, ActivityType, DifficultyLevel, ExpenseCategory, AccommodationType, TransportType, ItineraryItemType, PackingCategory } from '@/types'
-
-export const TRIP_TYPE_LABELS: Record<TripType, string> = {
-  leisure: 'Leisure',
-  business: 'Business',
-  adventure: 'Adventure',
-  cultural: 'Cultural',
-  romantic: 'Romantic',
-  family: 'Family',
-  solo: 'Solo',
-  group: 'Group',
-}
+import type { TripStatus, ActivityType, ExpenseCategory, AccommodationType, TransportType, ItineraryItemType, PackingCategory } from '@/types'
 
 export const TRIP_STATUS_LABELS: Record<TripStatus, string> = {
   planning: 'Planning',
-  booked: 'Booked',
-  in_progress: 'In Progress',
+  active: 'Active',
   completed: 'Completed',
   cancelled: 'Cancelled',
 }
 
 export const TRIP_STATUS_COLORS: Record<TripStatus, string> = {
   planning: 'bg-blue-100 text-blue-800',
-  booked: 'bg-green-100 text-green-800',
-  in_progress: 'bg-yellow-100 text-yellow-800',
+  active: 'bg-green-100 text-green-800',
   completed: 'bg-gray-100 text-gray-800',
   cancelled: 'bg-red-100 text-red-800',
 }
 
 export const ACTIVITY_TYPE_LABELS: Record<ActivityType, string> = {
   sightseeing: 'Sightseeing',
-  dining: 'Dining',
+  food: 'Food & Dining',
+  adventure: 'Adventure',
   shopping: 'Shopping',
-  entertainment: 'Entertainment',
-  outdoor: 'Outdoor',
-  cultural: 'Cultural',
   relaxation: 'Relaxation',
   nightlife: 'Nightlife',
-  sports: 'Sports',
+  cultural: 'Cultural',
+  transport: 'Transport',
   other: 'Other',
-}
-
-export const DIFFICULTY_LABELS: Record<DifficultyLevel, string> = {
-  easy: 'Easy',
-  moderate: 'Moderate',
-  challenging: 'Challenging',
-  extreme: 'Extreme',
 }
 
 export const EXPENSE_CATEGORY_LABELS: Record<ExpenseCategory, string> = {
@@ -88,13 +67,10 @@ export const TRANSPORT_TYPE_LABELS: Record<TransportType, string> = {
   train: 'Train',
   bus: 'Bus',
   taxi: 'Taxi',
-  uber: 'Uber/Ride Share',
+  rideshare: 'Ride Share',
   rental_car: 'Rental Car',
   ferry: 'Ferry',
   subway: 'Subway/Metro',
-  tram: 'Tram',
-  bike: 'Bike',
-  walking: 'Walking',
   other: 'Other',
 }
 

@@ -12,18 +12,16 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { useCreateTrip } from '@/hooks/useTrips'
-import { TRIP_TYPE_LABELS, CURRENCIES } from '@/lib/constants'
-import type { TripType } from '@/types'
+import { CURRENCIES } from '@/lib/constants'
 
 const tripSchema = z.object({
+  name: z.string().min(1, 'Trip name is required'),
   destination: z.string().min(1, 'Destination is required'),
-  country: z.string().min(1, 'Country is required'),
   start_date: z.string().min(1, 'Start date is required'),
   end_date: z.string().min(1, 'End date is required'),
   budget: z.number().min(0, 'Budget must be positive'),
   currency: z.string().min(1, 'Currency is required'),
-  trip_type: z.string().min(1, 'Trip type is required'),
-  notes: z.string(),
+  description: z.string(),
 })
 
 type FormValues = z.infer<typeof tripSchema>
@@ -32,7 +30,7 @@ const steps = [
   { id: 1, title: 'Destination', icon: MapPin, description: 'Where are you going?' },
   { id: 2, title: 'Dates', icon: Calendar, description: 'When is your trip?' },
   { id: 3, title: 'Budget', icon: Wallet, description: 'Set your budget' },
-  { id: 4, title: 'Details', icon: FileText, description: 'Trip type and notes' },
+  { id: 4, title: 'Details', icon: FileText, description: 'Trip description' },
 ]
 
 const slideVariants = {
@@ -66,14 +64,13 @@ export function TripCreate() {
   } = useForm<FormValues>({
     resolver: zodResolver(tripSchema),
     defaultValues: {
+      name: '',
       destination: '',
-      country: '',
       start_date: '',
       end_date: '',
       budget: 0,
       currency: 'USD',
-      trip_type: 'leisure',
-      notes: '',
+      description: '',
     },
   })
 
@@ -81,10 +78,10 @@ export function TripCreate() {
 
   const canProceed = async () => {
     const fieldsPerStep: (keyof FormValues)[][] = [
-      ['destination', 'country'],
+      ['name', 'destination'],
       ['start_date', 'end_date'],
       ['budget', 'currency'],
-      ['trip_type'],
+      ['description'],
     ]
     return trigger(fieldsPerStep[currentStep])
   }
@@ -105,7 +102,7 @@ export function TripCreate() {
   }
 
   const onSubmit = (data: FormValues) => {
-    createTrip.mutate({ ...data, trip_type: data.trip_type as TripType }, {
+    createTrip.mutate(data, {
       onSuccess: (trip) => {
         navigate(`/trips/${trip.id}`)
       },
@@ -176,25 +173,25 @@ export function TripCreate() {
                 {currentStep === 0 && (
                   <div className="space-y-4">
                     <div className="space-y-2">
+                      <Label htmlFor="name">Trip Name</Label>
+                      <Input
+                        id="name"
+                        placeholder="e.g., Tokyo Adventure 2026"
+                        {...register('name')}
+                      />
+                      {errors.name && (
+                        <p className="text-sm text-destructive">{errors.name.message}</p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
                       <Label htmlFor="destination">Destination</Label>
                       <Input
                         id="destination"
-                        placeholder="e.g., Tokyo, Paris, New York"
+                        placeholder="e.g., Tokyo, Japan"
                         {...register('destination')}
                       />
                       {errors.destination && (
                         <p className="text-sm text-destructive">{errors.destination.message}</p>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="country">Country</Label>
-                      <Input
-                        id="country"
-                        placeholder="e.g., Japan, France, USA"
-                        {...register('country')}
-                      />
-                      {errors.country && (
-                        <p className="text-sm text-destructive">{errors.country.message}</p>
                       )}
                     </div>
                   </div>
@@ -267,30 +264,12 @@ export function TripCreate() {
                 {currentStep === 3 && (
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label>Trip Type</Label>
-                      <Select
-                        value={watchedValues.trip_type}
-                        onValueChange={(val) => setValue('trip_type', val as TripType)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select trip type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.entries(TRIP_TYPE_LABELS).map(([value, label]) => (
-                            <SelectItem key={value} value={value}>
-                              {label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="notes">Notes (optional)</Label>
+                      <Label htmlFor="description">Description (optional)</Label>
                       <Textarea
-                        id="notes"
+                        id="description"
                         placeholder="Any special plans or notes about your trip..."
                         rows={4}
-                        {...register('notes')}
+                        {...register('description')}
                       />
                     </div>
                   </div>

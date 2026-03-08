@@ -34,8 +34,8 @@ function TransportCard({ transport, onDelete }: { transport: Transport; onDelete
                 <span className="font-semibold">{transport.to_location}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Badge variant="secondary" className="text-xs">
-                  {TRANSPORT_TYPE_LABELS[transport.transport_type]}
+                <Badge variant="secondary" className="text-xs capitalize">
+                  {TRANSPORT_TYPE_LABELS[transport.type as keyof typeof TRANSPORT_TYPE_LABELS] ?? transport.type}
                 </Badge>
                 {transport.departure_time && transport.arrival_time && (
                   <span>{formatTime(transport.departure_time)} - {formatTime(transport.arrival_time)}</span>

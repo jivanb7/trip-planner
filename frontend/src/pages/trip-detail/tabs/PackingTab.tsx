@@ -6,7 +6,6 @@ import { EmptyState } from '@/components/shared/EmptyState'
 import { PackingCategoryGroup } from '../components/PackingCategoryGroup'
 import { usePacking, useUpdatePackingItem, useDeletePackingItem } from '@/hooks/usePacking'
 import { getPercentage } from '@/lib/formatters'
-import type { PackingCategory } from '@/types'
 
 interface PackingTabProps {
   tripId: string
@@ -29,12 +28,12 @@ export function PackingTab({ tripId }: PackingTabProps) {
     )
   }
 
-  const packedCount = items.filter((i) => i.is_packed).length
+  const packedCount = items.filter((i) => i.packed).length
   const totalCount = items.length
   const percentage = getPercentage(packedCount, totalCount)
 
   // Group by category
-  const groups = new Map<PackingCategory, typeof items>()
+  const groups = new Map<string, typeof items>()
   for (const item of items) {
     const existing = groups.get(item.category) || []
     existing.push(item)
@@ -68,7 +67,7 @@ export function PackingTab({ tripId }: PackingTabProps) {
                 category={category}
                 items={categoryItems}
                 onToggle={(id, isPacked) =>
-                  updateItem.mutate({ id, data: { is_packed: isPacked } })
+                  updateItem.mutate({ id, data: { packed: isPacked } })
                 }
                 onDelete={(id) => deleteItem.mutate(id)}
               />

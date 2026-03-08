@@ -19,7 +19,7 @@ import type { ExpenseCategory } from '@/types'
 interface BudgetTabProps {
   tripId: string
   currency: string
-  budget: number
+  budget: number | null
 }
 
 export function BudgetTab({ tripId, currency, budget }: BudgetTabProps) {
@@ -56,19 +56,19 @@ export function BudgetTab({ tripId, currency, budget }: BudgetTabProps) {
     )
   }
 
-  const chartData = summary?.by_category
-    ? Object.entries(summary.by_category)
-        .filter(([, amount]) => amount > 0)
-        .map(([category, amount]) => ({
-          name: EXPENSE_CATEGORY_LABELS[category as ExpenseCategory],
-          value: amount,
-          color: EXPENSE_CATEGORY_COLORS[category as ExpenseCategory],
+  const chartData = summary?.categories
+    ? summary.categories
+        .filter((c) => c.total_usd > 0)
+        .map((c) => ({
+          name: EXPENSE_CATEGORY_LABELS[c.category as ExpenseCategory] ?? c.category,
+          value: c.total_usd,
+          color: EXPENSE_CATEGORY_COLORS[c.category as ExpenseCategory] ?? '#9ca3af',
         }))
     : []
 
-  const totalSpent = budgetInfo?.total_spent ?? 0
-  const remaining = budgetInfo?.remaining ?? budget
-  const percentage = getPercentage(totalSpent, budget)
+  const totalSpent = budgetInfo?.total_spent_usd ?? 0
+  const remaining = budgetInfo?.budget_remaining_usd ?? budget
+  const percentage = getPercentage(totalSpent, budget ?? 0)
 
   if (isLoading) return <LoadingSpinner className="py-16" text="Loading budget..." />
 
@@ -79,7 +79,7 @@ export function BudgetTab({ tripId, currency, budget }: BudgetTabProps) {
         <Card>
           <CardContent className="p-4">
             <p className="text-sm text-muted-foreground">Total Budget</p>
-            <p className="text-2xl font-bold">{formatCurrency(budget, currency)}</p>
+            <p className="text-2xl font-bold">{budget != null ? formatCurrency(budget, currency) : 'Not set'}</p>
           </CardContent>
         </Card>
         <Card>
@@ -91,8 +91,8 @@ export function BudgetTab({ tripId, currency, budget }: BudgetTabProps) {
         <Card>
           <CardContent className="p-4">
             <p className="text-sm text-muted-foreground">Remaining</p>
-            <p className={`text-2xl font-bold ${remaining < 0 ? 'text-destructive' : ''}`}>
-              {formatCurrency(remaining, currency)}
+            <p className={`text-2xl font-bold ${remaining != null && remaining < 0 ? 'text-destructive' : ''}`}>
+              {remaining != null ? formatCurrency(remaining, currency) : 'N/A'}
             </p>
           </CardContent>
         </Card>

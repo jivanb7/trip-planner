@@ -3,8 +3,7 @@ import { Clock, MapPin, DollarSign, ExternalLink, Trash2, ChevronDown, ChevronUp
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ACTIVITY_TYPE_LABELS, DIFFICULTY_LABELS } from '@/lib/constants'
-import { formatCurrency, formatDuration, formatTimeShort } from '@/lib/formatters'
+import { formatCurrency, formatTimeShort } from '@/lib/formatters'
 import type { Activity } from '@/types'
 
 interface ActivityCardProps {
@@ -22,29 +21,26 @@ export function ActivityCard({ activity, onDelete }: ActivityCardProps) {
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2">
               <h4 className="font-semibold">{activity.name}</h4>
-              <Badge variant="secondary" className="text-xs">
-                {ACTIVITY_TYPE_LABELS[activity.activity_type]}
-              </Badge>
-              {activity.difficulty && (
-                <Badge variant="outline" className="text-xs">
-                  {DIFFICULTY_LABELS[activity.difficulty]}
+              {activity.category && (
+                <Badge variant="secondary" className="text-xs capitalize">
+                  {activity.category}
                 </Badge>
               )}
             </div>
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-              {activity.duration_minutes && (
+              {activity.start_time && (
                 <div className="flex items-center gap-1">
                   <Clock className="size-3.5" />
-                  <span>{formatDuration(activity.duration_minutes)}</span>
+                  <span>
+                    {formatTimeShort(activity.start_time)}
+                    {activity.end_time && ` - ${formatTimeShort(activity.end_time)}`}
+                  </span>
                 </div>
-              )}
-              {activity.start_time && (
-                <span>{formatTimeShort(activity.start_time)}</span>
               )}
               {activity.cost != null && activity.cost > 0 && (
                 <div className="flex items-center gap-1">
                   <DollarSign className="size-3.5" />
-                  <span>{formatCurrency(activity.cost, activity.currency || 'USD')}</span>
+                  <span>{formatCurrency(activity.cost, activity.currency)}</span>
                 </div>
               )}
               {activity.location && (

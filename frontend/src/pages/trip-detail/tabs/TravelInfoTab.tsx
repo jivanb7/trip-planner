@@ -1,6 +1,5 @@
-import { Shield, Globe, Languages, Plug, Phone, AlertTriangle } from 'lucide-react'
+import { Shield, Globe, Languages, Plug, Phone } from 'lucide-react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { Badge } from '@/components/ui/badge'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { useTravelInfo } from '@/hooks/useTravelInfo'
@@ -25,31 +24,33 @@ export function TravelInfoTab({ tripId }: TravelInfoTabProps) {
   }
 
   return (
-    <Accordion type="multiple" defaultValue={['visa', 'currency', 'language', 'electrical', 'safety']} className="space-y-2">
-      {/* Visa & Passport */}
+    <Accordion type="multiple" defaultValue={['visa', 'currency', 'language', 'electrical', 'emergency']} className="space-y-2">
+      {/* Visa & Entry */}
       <AccordionItem value="visa" className="border rounded-lg px-4">
         <AccordionTrigger className="hover:no-underline">
           <div className="flex items-center gap-2">
             <Shield className="size-4" />
-            <span>Visa & Passport</span>
+            <span>Visa & Entry Requirements</span>
           </div>
         </AccordionTrigger>
         <AccordionContent>
           <div className="space-y-3 pb-2">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Visa Required:</span>
-              <Badge variant={info.visa_required ? 'destructive' : 'secondary'}>
-                {info.visa_required ? 'Yes' : 'No'}
-              </Badge>
-            </div>
-            {info.visa_type && (
+            {info.visa_requirements ? (
+              <p className="text-sm text-muted-foreground">{info.visa_requirements}</p>
+            ) : (
+              <p className="text-sm text-muted-foreground">No visa information provided.</p>
+            )}
+            {info.vaccination_info && (
               <div>
-                <span className="text-sm text-muted-foreground">Visa Type: </span>
-                <span className="text-sm">{info.visa_type}</span>
+                <span className="text-sm font-medium">Vaccination Info: </span>
+                <p className="text-sm text-muted-foreground">{info.vaccination_info}</p>
               </div>
             )}
-            {info.visa_notes && (
-              <p className="text-sm text-muted-foreground">{info.visa_notes}</p>
+            {info.travel_insurance && (
+              <div>
+                <span className="text-sm font-medium">Travel Insurance: </span>
+                <p className="text-sm text-muted-foreground">{info.travel_insurance}</p>
+              </div>
             )}
           </div>
         </AccordionContent>
@@ -65,17 +66,13 @@ export function TravelInfoTab({ tripId }: TravelInfoTabProps) {
         </AccordionTrigger>
         <AccordionContent>
           <div className="space-y-3 pb-2">
-            {info.local_currency && (
+            {info.local_currency ? (
               <div>
                 <span className="text-sm text-muted-foreground">Local Currency: </span>
                 <span className="text-sm font-medium">{info.local_currency}</span>
               </div>
-            )}
-            {info.exchange_rate && (
-              <div>
-                <span className="text-sm text-muted-foreground">Exchange Rate: </span>
-                <span className="text-sm">1 USD = {info.exchange_rate} {info.local_currency}</span>
-              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">No currency information provided.</p>
             )}
           </div>
         </AccordionContent>
@@ -97,7 +94,13 @@ export function TravelInfoTab({ tripId }: TravelInfoTabProps) {
                 <span className="text-sm font-medium">{info.language}</span>
               </div>
             )}
-            {info.useful_phrases && info.useful_phrases.length > 0 && (
+            {info.timezone && (
+              <div>
+                <span className="text-sm text-muted-foreground">Timezone: </span>
+                <span className="text-sm">{info.timezone}</span>
+              </div>
+            )}
+            {info.useful_phrases && Object.keys(info.useful_phrases).length > 0 && (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -107,10 +110,10 @@ export function TravelInfoTab({ tripId }: TravelInfoTabProps) {
                     </tr>
                   </thead>
                   <tbody>
-                    {info.useful_phrases.map((phrase, i) => (
-                      <tr key={i} className="border-b last:border-0">
-                        <td className="py-2 pr-4">{phrase.phrase}</td>
-                        <td className="py-2 font-medium">{phrase.translation}</td>
+                    {Object.entries(info.useful_phrases).map(([phrase, translation]) => (
+                      <tr key={phrase} className="border-b last:border-0">
+                        <td className="py-2 pr-4">{phrase}</td>
+                        <td className="py-2 font-medium">{translation}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -131,71 +134,45 @@ export function TravelInfoTab({ tripId }: TravelInfoTabProps) {
         </AccordionTrigger>
         <AccordionContent>
           <div className="space-y-3 pb-2">
-            {info.plug_type && (
+            {info.power_outlet ? (
               <div>
-                <span className="text-sm text-muted-foreground">Plug Type: </span>
-                <span className="text-sm">{info.plug_type}</span>
+                <span className="text-sm text-muted-foreground">Power Outlet: </span>
+                <span className="text-sm">{info.power_outlet}</span>
               </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">No electrical information provided.</p>
             )}
-            {info.voltage && (
+            {info.notes && (
               <div>
-                <span className="text-sm text-muted-foreground">Voltage: </span>
-                <span className="text-sm">{info.voltage}</span>
+                <span className="text-sm font-medium">Notes: </span>
+                <p className="text-sm text-muted-foreground">{info.notes}</p>
               </div>
             )}
           </div>
         </AccordionContent>
       </AccordionItem>
 
-      {/* Safety & Emergency */}
-      <AccordionItem value="safety" className="border rounded-lg px-4">
+      {/* Emergency Numbers */}
+      <AccordionItem value="emergency" className="border rounded-lg px-4">
         <AccordionTrigger className="hover:no-underline">
           <div className="flex items-center gap-2">
             <Phone className="size-4" />
-            <span>Safety & Emergency</span>
+            <span>Emergency Numbers</span>
           </div>
         </AccordionTrigger>
         <AccordionContent>
           <div className="space-y-3 pb-2">
-            {info.safety_rating && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Safety Rating: </span>
-                <Badge variant="secondary">{info.safety_rating}</Badge>
-              </div>
-            )}
-            {info.safety_notes && (
-              <div className="flex items-start gap-2">
-                <AlertTriangle className="size-4 mt-0.5 text-amber-500" />
-                <p className="text-sm">{info.safety_notes}</p>
-              </div>
-            )}
-            {info.emergency_numbers && (
+            {info.emergency_numbers && Object.keys(info.emergency_numbers).length > 0 ? (
               <div className="grid grid-cols-2 gap-2">
-                {info.emergency_numbers.police && (
-                  <div className="text-sm">
-                    <span className="text-muted-foreground">Police: </span>
-                    <span className="font-medium">{info.emergency_numbers.police}</span>
+                {Object.entries(info.emergency_numbers).map(([label, number]) => (
+                  <div key={label} className="text-sm">
+                    <span className="text-muted-foreground capitalize">{label}: </span>
+                    <span className="font-medium">{number}</span>
                   </div>
-                )}
-                {info.emergency_numbers.ambulance && (
-                  <div className="text-sm">
-                    <span className="text-muted-foreground">Ambulance: </span>
-                    <span className="font-medium">{info.emergency_numbers.ambulance}</span>
-                  </div>
-                )}
-                {info.emergency_numbers.fire && (
-                  <div className="text-sm">
-                    <span className="text-muted-foreground">Fire: </span>
-                    <span className="font-medium">{info.emergency_numbers.fire}</span>
-                  </div>
-                )}
-                {info.emergency_numbers.tourist_police && (
-                  <div className="text-sm">
-                    <span className="text-muted-foreground">Tourist Police: </span>
-                    <span className="font-medium">{info.emergency_numbers.tourist_police}</span>
-                  </div>
-                )}
+                ))}
               </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">No emergency numbers provided.</p>
             )}
           </div>
         </AccordionContent>

@@ -99,7 +99,7 @@ export function TripDetail() {
               <LogisticsTab tripId={id!} />
             </TabsContent>
             <TabsContent value="budget" className="mt-0">
-              <BudgetTab tripId={id!} currency={trip.currency} budget={trip.budget} />
+              <BudgetTab tripId={id!} currency={trip.currency} budget={trip.budget ?? null} />
             </TabsContent>
             <TabsContent value="itinerary" className="mt-0">
               <ItineraryTab tripId={id!} trip={trip} />
