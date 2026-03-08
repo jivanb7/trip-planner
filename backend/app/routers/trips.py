@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from app import crud
 from app.database import get_db
+from app.utils import convert_to_usd
 from app.schemas.trip import (
     TripBudget,
     TripBudgetUpdate,
@@ -49,7 +50,6 @@ def get_trip_summary(trip_id: str, db: Session = Depends(get_db)):
     total_spent_usd = crud.trips.get_total_spent_usd(db, trip_id)
     budget_remaining = None
     if trip.budget is not None:
-        from app.utils import convert_to_usd
         budget_usd = convert_to_usd(trip.budget, trip.currency)
         budget_remaining = round(budget_usd - total_spent_usd, 2)
 
@@ -79,7 +79,6 @@ def get_trip_budget(trip_id: str, db: Session = Depends(get_db)):
     total_spent_usd = crud.trips.get_total_spent_usd(db, trip_id)
     budget_remaining = None
     if trip.budget is not None:
-        from app.utils import convert_to_usd
         budget_usd = convert_to_usd(trip.budget, trip.currency)
         budget_remaining = round(budget_usd - total_spent_usd, 2)
     return TripBudget(

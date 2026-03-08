@@ -113,7 +113,7 @@ def register_read_tools(mcp: FastMCP) -> None:
     async def get_recent_changes(trip_id: str, since_timestamp: str | None = None) -> str:
         """Get recent changes to a trip — useful for seeing what was added or modified.
 
-        Shows recently created/updated activities, expenses, flights, accommodations, etc.
+        Shows recently created/updated activities, expenses, flights, accommodations, transports, and packing items.
 
         Args:
             trip_id: The trip ID to check
@@ -121,21 +121,29 @@ def register_read_tools(mcp: FastMCP) -> None:
         """
         # Gather all child resources and sort by updated_at
         activities = await api.list_activities(trip_id)
+        expenses = await api.list_expenses(trip_id)
+        flights = await api.list_flights(trip_id)
+        accommodations = await api.list_accommodations(trip_id)
+        transports = await api.list_transports(trip_id)
         packing = await api.list_packing_items(trip_id)
 
+        resource_map: list[tuple[str, list[dict[str, Any]], str]] = [
+            ("Activity", activities, "name"),
+            ("Expense", expenses, "description"),
+            ("Flight", flights, "flight_number"),
+            ("Accommodation", accommodations, "name"),
+            ("Transport", transports, "type"),
+            ("Packing item", packing, "name"),
+        ]
+
         all_items: list[dict[str, Any]] = []
-        for a in activities:
-            all_items.append({
-                "type": "Activity",
-                "name": a.get("name", "?"),
-                "updated_at": a.get("updated_at", a.get("created_at", "")),
-            })
-        for p in packing:
-            all_items.append({
-                "type": "Packing item",
-                "name": p.get("name", "?"),
-                "updated_at": p.get("updated_at", p.get("created_at", "")),
-            })
+        for resource_type, items, name_key in resource_map:
+            for item in items:
+                all_items.append({
+                    "type": resource_type,
+                    "name": item.get(name_key, "?"),
+                    "updated_at": item.get("updated_at", item.get("created_at", "")),
+                })
 
         # Filter by timestamp if provided
         if since_timestamp:

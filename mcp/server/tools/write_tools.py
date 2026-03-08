@@ -360,7 +360,6 @@ def register_write_tools(mcp: FastMCP) -> None:
         address: str | None = None,
         booking_reference: str | None = None,
         cost_per_night: float | None = None,
-        total_cost: float | None = None,
         notes: str | None = None,
         latitude: float | None = None,
         longitude: float | None = None,
@@ -376,7 +375,6 @@ def register_write_tools(mcp: FastMCP) -> None:
             address: Full address
             booking_reference: Booking confirmation code
             cost_per_night: Cost per night
-            total_cost: Total cost for the stay
             notes: Additional notes
             latitude: GPS latitude for map pin
             longitude: GPS longitude for map pin

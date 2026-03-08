@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { itineraryApi } from '@/api/endpoints/itinerary'
-import type { ItineraryItem } from '@/types'
+import type { ItineraryItem, ItineraryItemCreateForm } from '@/types'
 import { toast } from 'sonner'
 
 export function useItinerary(tripId: string) {
@@ -14,7 +14,7 @@ export function useItinerary(tripId: string) {
 export function useCreateItineraryItem(tripId: string) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (data: Partial<ItineraryItem>) => itineraryApi.create(tripId, data),
+    mutationFn: (data: ItineraryItemCreateForm) => itineraryApi.create(tripId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trips', tripId, 'itinerary'] })
       toast.success('Itinerary item added!')

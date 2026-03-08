@@ -240,3 +240,23 @@ export interface ExpenseCreateForm {
   date: string
   notes: string
 }
+
+export interface PackingItemCreateForm {
+  name: string
+  category: string
+  quantity: number
+  packed: boolean
+}
+
+export interface ItineraryItemCreateForm {
+  date: string
+  start_time: string
+  end_time: string
+  title: string
+  description: string
+  location: string
+  category: string
+  sort_order: number
+  cost: number | null
+  notes: string
+}

@@ -25,7 +25,8 @@ export function formatDateRange(start: string, end: string): string {
   return `${startFormatted} - ${endFormatted}`
 }
 
-export function formatTime(timeStr: string): string {
+export function formatTime(timeStr: string | null): string {
+  if (!timeStr) return ''
   return format(parseISO(timeStr), 'h:mm a')
 }
 

@@ -91,6 +91,9 @@ class TripPlannerClient:
 
     # ── Expenses ─────────────────────────────────────────────────────
 
+    async def list_expenses(self, trip_id: str) -> list[dict]:
+        return await self._get(f"/trips/{trip_id}/expenses")
+
     async def create_expense(self, trip_id: str, data: dict) -> dict:
         return await self._post(f"/trips/{trip_id}/expenses", json=data)
 
@@ -99,15 +102,24 @@ class TripPlannerClient:
 
     # ── Flights ──────────────────────────────────────────────────────
 
+    async def list_flights(self, trip_id: str) -> list[dict]:
+        return await self._get(f"/trips/{trip_id}/flights")
+
     async def create_flight(self, trip_id: str, data: dict) -> dict:
         return await self._post(f"/trips/{trip_id}/flights", json=data)
 
     # ── Accommodations ───────────────────────────────────────────────
 
+    async def list_accommodations(self, trip_id: str) -> list[dict]:
+        return await self._get(f"/trips/{trip_id}/accommodations")
+
     async def create_accommodation(self, trip_id: str, data: dict) -> dict:
         return await self._post(f"/trips/{trip_id}/accommodations", json=data)
 
     # ── Transports ───────────────────────────────────────────────────
+
+    async def list_transports(self, trip_id: str) -> list[dict]:
+        return await self._get(f"/trips/{trip_id}/transports")
 
     async def create_transport(self, trip_id: str, data: dict) -> dict:
         return await self._post(f"/trips/{trip_id}/transports", json=data)

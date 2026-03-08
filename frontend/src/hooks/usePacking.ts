@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { packingApi } from '@/api/endpoints/packing'
-import type { PackingItem } from '@/types'
+import type { PackingItem, PackingItemCreateForm } from '@/types'
 import { toast } from 'sonner'
 
 export function usePacking(tripId: string) {
@@ -14,7 +14,7 @@ export function usePacking(tripId: string) {
 export function useCreatePackingItem(tripId: string) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (data: Partial<PackingItem>) => packingApi.create(tripId, data),
+    mutationFn: (data: PackingItemCreateForm) => packingApi.create(tripId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trips', tripId, 'packing'] })
       toast.success('Packing item added!')
