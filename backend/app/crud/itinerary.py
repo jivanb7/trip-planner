@@ -6,11 +6,11 @@ from app.schemas.itinerary_item import ItineraryItemCreate, ItineraryItemUpdate,
 
 
 class CRUDItinerary(CRUDBase[ItineraryItem, ItineraryItemCreate, ItineraryItemUpdate]):
-    def reorder(self, db: Session, reorder_req: ItineraryReorderRequest) -> list[ItineraryItem]:
+    def reorder(self, db: Session, reorder_req: ItineraryReorderRequest, trip_id: str) -> list[ItineraryItem]:
         updated = []
         for item_order in reorder_req.items:
             db_item = db.get(ItineraryItem, item_order.id)
-            if db_item:
+            if db_item and db_item.trip_id == trip_id:
                 db_item.sort_order = item_order.sort_order
                 updated.append(db_item)
         db.commit()

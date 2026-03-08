@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app import crud
@@ -10,7 +10,7 @@ router = APIRouter(prefix="/api/v1/trips/{trip_id}/expenses", tags=["expenses"])
 
 
 @router.get("", response_model=list[ExpenseRead])
-def list_expenses(trip_id: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def list_expenses(trip_id: str, skip: int = Query(default=0, ge=0), limit: int = Query(default=100, ge=1, le=1000), db: Session = Depends(get_db)):
     crud.trips.get_or_404(db, trip_id)
     return crud.expenses.get_multi(db, skip=skip, limit=limit, trip_id=trip_id)
 
