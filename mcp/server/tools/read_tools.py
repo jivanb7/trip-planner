@@ -27,7 +27,8 @@ def register_read_tools(mcp: FastMCP) -> None:
         """
         summary = await api.get_trip_summary(trip_id)
 
-        trip = summary if "name" in summary else summary.get("trip", summary)
+        # TripSummary schema: { trip: TripRead, activity_count, ..., total_spent_usd, budget_remaining_usd }
+        trip = summary.get("trip", summary)
         name = trip.get("name", "Unknown")
         dest = trip.get("destination", "Unknown")
         start = trip.get("start_date", "?")
@@ -42,17 +43,17 @@ def register_read_tools(mcp: FastMCP) -> None:
         if desc:
             lines.append(f"Description: {desc}")
 
-        # Budget info
-        budget = summary.get("budget") or trip.get("budget")
-        currency = summary.get("currency") or trip.get("currency", "USD")
-        total_spent = summary.get("total_spent", 0)
-        remaining = summary.get("remaining")
+        # Budget info — TripSummary uses total_spent_usd and budget_remaining_usd
+        budget = trip.get("budget")
+        currency = trip.get("currency", "USD")
+        total_spent = float(summary.get("total_spent_usd", 0))
+        remaining = summary.get("budget_remaining_usd")
 
-        if budget:
-            lines.append(f"\nBudget: ${budget:.2f} {currency}")
+        if budget is not None:
+            lines.append(f"\nBudget: ${float(budget):.2f} {currency}")
             lines.append(f"Spent: ${total_spent:.2f}")
             if remaining is not None:
-                lines.append(f"Remaining: ${remaining:.2f}")
+                lines.append(f"Remaining: ${float(remaining):.2f}")
         else:
             lines.append("\nBudget: Not set")
 
@@ -87,8 +88,8 @@ def register_read_tools(mcp: FastMCP) -> None:
 
         budget = budget_data.get("budget")
         currency = budget_data.get("currency", "USD")
-        total_spent = budget_data.get("total_spent", 0)
-        remaining = budget_data.get("remaining")
+        total_spent = float(budget_data.get("total_spent_usd", 0))
+        remaining = budget_data.get("budget_remaining_usd")
 
         if budget is None:
             return (
@@ -100,11 +101,12 @@ def register_read_tools(mcp: FastMCP) -> None:
         pct_used = (total_spent / budget * 100) if budget > 0 else 0
         status = "On track" if pct_used < 80 else "Warning" if pct_used < 100 else "Over budget!"
 
+        remaining_str = f"${remaining:.2f}" if remaining is not None else "N/A"
         return (
             f"Budget Status: {status}\n"
             f"  Total budget: ${budget:.2f} {currency}\n"
             f"  Total spent: ${total_spent:.2f} ({pct_used:.1f}%)\n"
-            f"  Remaining: ${remaining:.2f}"
+            f"  Remaining: {remaining_str}"
         )
 
     @mcp.tool()

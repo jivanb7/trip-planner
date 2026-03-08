@@ -290,9 +290,7 @@ def register_write_tools(mcp: FastMCP) -> None:
         result = await api.update_trip_budget(trip_id, data)
         return (
             f"Budget updated!\n"
-            f"  Budget: ${result.get('budget', budget):.2f} {result.get('currency', currency or 'USD')}\n"
-            f"  Total spent: ${result.get('total_spent', 0):.2f}\n"
-            f"  Remaining: ${result.get('remaining', budget):.2f}"
+            f"  Budget: ${result.get('budget', budget):.2f} {result.get('currency', currency or 'USD')}"
         )
 
     # ── Flights ──────────────────────────────────────────────────────
@@ -333,7 +331,7 @@ def register_write_tools(mcp: FastMCP) -> None:
             "arrival_time": arrival_time,
         }
         for key, val in [
-            ("booking_reference", booking_reference),
+            ("confirmation_number", booking_reference),
             ("cost", cost),
             ("notes", notes),
         ]:
@@ -383,14 +381,13 @@ def register_write_tools(mcp: FastMCP) -> None:
             latitude: GPS latitude for map pin
             longitude: GPS longitude for map pin
         """
-        data: dict[str, Any] = {"name": name, "accommodation_type": accommodation_type}
+        data: dict[str, Any] = {"name": name, "type": accommodation_type}
         for key, val in [
             ("check_in", check_in),
             ("check_out", check_out),
             ("address", address),
-            ("booking_reference", booking_reference),
+            ("confirmation_number", booking_reference),
             ("cost_per_night", cost_per_night),
-            ("total_cost", total_cost),
             ("notes", notes),
             ("latitude", latitude),
             ("longitude", longitude),
@@ -402,7 +399,7 @@ def register_write_tools(mcp: FastMCP) -> None:
         return (
             f"Accommodation added!\n"
             f"  Name: {acc['name']}\n"
-            f"  Type: {acc.get('accommodation_type', accommodation_type)}\n"
+            f"  Type: {acc.get('type', accommodation_type)}\n"
             f"  Check-in: {acc.get('check_in', 'Not set')}\n"
             f"  Check-out: {acc.get('check_out', 'Not set')}\n"
             f"  ID: {acc['id']}"
@@ -436,7 +433,7 @@ def register_write_tools(mcp: FastMCP) -> None:
             notes: Additional notes
         """
         data: dict[str, Any] = {
-            "transport_type": transport_type,
+            "type": transport_type,
             "from_location": from_location,
             "to_location": to_location,
         }
@@ -444,7 +441,7 @@ def register_write_tools(mcp: FastMCP) -> None:
             ("departure_time", departure_time),
             ("arrival_time", arrival_time),
             ("cost", cost),
-            ("booking_reference", booking_reference),
+            ("confirmation_number", booking_reference),
             ("notes", notes),
         ]:
             if val is not None:
@@ -453,7 +450,7 @@ def register_write_tools(mcp: FastMCP) -> None:
         transport = await api.create_transport(trip_id, data)
         return (
             f"Transport added!\n"
-            f"  Type: {transport.get('transport_type', transport_type)}\n"
+            f"  Type: {transport.get('type', transport_type)}\n"
             f"  From: {transport.get('from_location', from_location)}\n"
             f"  To: {transport.get('to_location', to_location)}\n"
             f"  ID: {transport['id']}"
@@ -465,14 +462,14 @@ def register_write_tools(mcp: FastMCP) -> None:
     async def set_travel_info(
         trip_id: str,
         visa_requirements: str | None = None,
-        passport_notes: str | None = None,
         vaccination_info: str | None = None,
         travel_insurance: str | None = None,
         emergency_numbers: dict[str, str] | None = None,
         useful_phrases: dict[str, str] | None = None,
         timezone: str | None = None,
         language: str | None = None,
-        plug_type: str | None = None,
+        power_outlet: str | None = None,
+        local_currency: str | None = None,
         notes: str | None = None,
     ) -> str:
         """Set or update travel information for a trip (visa, health, emergency info, etc.).
@@ -482,27 +479,27 @@ def register_write_tools(mcp: FastMCP) -> None:
         Args:
             trip_id: The trip to set travel info for
             visa_requirements: Visa requirements description
-            passport_notes: Passport-related notes
             vaccination_info: Required/recommended vaccinations
             travel_insurance: Insurance details or policy number
             emergency_numbers: Dict of label->number (e.g. {"Police": "110", "Ambulance": "119"})
             useful_phrases: Dict of English->local language (e.g. {"Hello": "Konnichiwa"})
             timezone: Destination timezone (e.g. "Asia/Tokyo")
             language: Primary local language
-            plug_type: Electrical plug type (e.g. "Type A/B")
+            power_outlet: Electrical plug/outlet type (e.g. "Type A/B, 100V")
+            local_currency: Local currency code (e.g. "JPY")
             notes: Additional travel notes
         """
         data: dict[str, Any] = {}
         for key, val in [
             ("visa_requirements", visa_requirements),
-            ("passport_notes", passport_notes),
             ("vaccination_info", vaccination_info),
             ("travel_insurance", travel_insurance),
             ("emergency_numbers", emergency_numbers),
             ("useful_phrases", useful_phrases),
             ("timezone", timezone),
             ("language", language),
-            ("plug_type", plug_type),
+            ("power_outlet", power_outlet),
+            ("local_currency", local_currency),
             ("notes", notes),
         ]:
             if val is not None:
