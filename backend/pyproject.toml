@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "trip-planner-backend"
+version = "0.1.0"
+description = "AI Trip Planner — FastAPI backend"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.111",
+    "uvicorn[standard]",
+    "sqlalchemy>=2.0",
+    "alembic",
+    "pydantic>=2.0",
+    "pydantic-settings",
+    "python-multipart",
+]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
