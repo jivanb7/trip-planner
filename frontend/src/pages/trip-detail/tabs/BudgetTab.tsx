@@ -98,7 +98,7 @@ export function BudgetTab({ tripId, currency, budget }: BudgetTabProps) {
         </Card>
       </div>
 
-      <Progress value={percentage} className="h-3" />
+      <Progress value={percentage} className="h-3" aria-label={`Budget used: ${percentage}%`} />
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Chart */}

@@ -1,15 +1,14 @@
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { Plus, MapPin, Calendar, Wallet, Plane } from 'lucide-react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { useTrips } from '@/hooks/useTrips'
 import { TRIP_STATUS_LABELS, TRIP_STATUS_COLORS } from '@/lib/constants'
-import { formatDateRange, formatCurrency, getPercentage } from '@/lib/formatters'
+import { formatDateRange, formatCurrency } from '@/lib/formatters'
 import type { Trip } from '@/types'
 
 const containerVariants = {
@@ -32,11 +31,10 @@ const itemVariants = {
 }
 
 function TripCard({ trip }: { trip: Trip }) {
-  const budgetUsed = 0 // Will be computed from summary endpoint when available
-  const percentage = getPercentage(budgetUsed, trip.budget ?? 0)
+  const shouldReduceMotion = useReducedMotion()
 
   return (
-    <motion.div variants={itemVariants}>
+    <motion.div variants={shouldReduceMotion ? {} : itemVariants}>
       <Link to={`/trips/${trip.id}`}>
         <Card className="group cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5">
           <CardHeader className="pb-3">
@@ -65,17 +63,14 @@ function TripCard({ trip }: { trip: Trip }) {
                 <span>{formatDateRange(trip.start_date ?? '', trip.end_date ?? '')}</span>
               </div>
             </div>
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                  <Wallet className="size-3.5" />
-                  <span>Budget</span>
-                </div>
-                <span className="font-medium">
-                  {trip.budget != null ? formatCurrency(trip.budget, trip.currency) : 'Not set'}
-                </span>
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-1.5 text-muted-foreground">
+                <Wallet className="size-3.5" />
+                <span>Budget</span>
               </div>
-              {trip.budget != null && <Progress value={percentage} className="h-1.5" />}
+              <span className="font-medium">
+                {trip.budget != null ? formatCurrency(trip.budget, trip.currency) : 'Not set'}
+              </span>
             </div>
           </CardContent>
         </Card>
@@ -105,6 +100,7 @@ function DashboardSkeleton() {
 
 export function Dashboard() {
   const { data: trips, isLoading, error } = useTrips()
+  const shouldReduceMotion = useReducedMotion()
 
   return (
     <div className="space-y-6">
@@ -152,7 +148,7 @@ export function Dashboard() {
       {trips && trips.length > 0 && (
         <motion.div
           className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-          variants={containerVariants}
+          variants={shouldReduceMotion ? {} : containerVariants}
           initial="hidden"
           animate="visible"
         >

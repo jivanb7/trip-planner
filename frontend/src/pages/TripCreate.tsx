@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { ArrowLeft, ArrowRight, MapPin, Calendar, Wallet, FileText, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -53,6 +53,7 @@ export function TripCreate() {
   const [currentStep, setCurrentStep] = useState(0)
   const [direction, setDirection] = useState(1)
   const createTrip = useCreateTrip()
+  const shouldReduceMotion = useReducedMotion()
 
   const {
     register,
@@ -164,7 +165,7 @@ export function TripCreate() {
               <motion.div
                 key={currentStep}
                 custom={direction}
-                variants={slideVariants}
+                variants={shouldReduceMotion ? { enter: {}, center: {}, exit: {} } : slideVariants}
                 initial="enter"
                 animate="center"
                 exit="exit"

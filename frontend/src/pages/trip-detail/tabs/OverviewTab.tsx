@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Calendar, MapPin, DollarSign, CloudSun, AlertTriangle } from 'lucide-react'
+import { Calendar, MapPin, DollarSign, CloudSun, FileText } from 'lucide-react'
 import { useTripBudget } from '@/hooks/useTrips'
 import { useActivities } from '@/hooks/useActivities'
 import { useAccommodations } from '@/hooks/useAccommodations'
@@ -59,6 +59,7 @@ export function OverviewTab({ tripId, trip }: OverviewTabProps) {
               <Progress
                 value={getPercentage(budget.total_spent_usd, budget.budget ?? 0)}
                 className="h-2"
+                aria-label={`Budget used: ${getPercentage(budget.total_spent_usd, budget.budget ?? 0)}%`}
               />
               <p className="text-xs text-muted-foreground">
                 {formatCurrency(budget.total_spent_usd, budget.currency)} spent
@@ -70,7 +71,7 @@ export function OverviewTab({ tripId, trip }: OverviewTabProps) {
                 {trip.budget != null ? formatCurrency(trip.budget, trip.currency) : 'Not set'}
               </p>
               <p className="text-xs text-muted-foreground">No expenses tracked yet</p>
-              <Progress value={0} className="h-2" />
+              <Progress value={0} className="h-2" aria-label="Budget used: 0%" />
             </div>
           )}
         </CardContent>
@@ -167,7 +168,7 @@ export function OverviewTab({ tripId, trip }: OverviewTabProps) {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <AlertTriangle className="size-4" />
+              <FileText className="size-4" />
               Notes
             </CardTitle>
           </CardHeader>

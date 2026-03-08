@@ -46,7 +46,7 @@ export function PackingCategoryGroup({ category, items, onToggle, onDelete }: Pa
               variant="ghost"
               size="icon-xs"
               onClick={() => onDelete(item.id)}
-              className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive"
+              className="opacity-40 group-hover:opacity-100 focus-visible:opacity-100 text-muted-foreground hover:text-destructive"
               aria-label={`Delete ${item.name}`}
             >
               <Trash2 className="size-3" />

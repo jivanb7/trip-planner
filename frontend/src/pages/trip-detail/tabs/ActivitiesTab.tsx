@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Plus, Search, SlidersHorizontal } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Search, SlidersHorizontal, Info } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
@@ -58,10 +57,10 @@ export function ActivitiesTab({ tripId }: ActivitiesTabProps) {
             </SelectContent>
           </Select>
         </div>
-        <Button size="sm" disabled>
-          <Plus className="size-4" />
-          Add Activity
-        </Button>
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground border rounded-md px-3 py-1.5">
+          <Info className="size-3.5 shrink-0" />
+          <span>Add activities using Claude Desktop or the API</span>
+        </div>
       </div>
 
       {filtered && filtered.length === 0 && (

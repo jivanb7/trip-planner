@@ -24,7 +24,7 @@ export function TravelInfoTab({ tripId }: TravelInfoTabProps) {
   }
 
   return (
-    <Accordion type="multiple" defaultValue={['visa', 'currency', 'language', 'electrical', 'emergency']} className="space-y-2">
+    <Accordion type="multiple" defaultValue={['visa']} className="space-y-2">
       {/* Visa & Entry */}
       <AccordionItem value="visa" className="border rounded-lg px-4">
         <AccordionTrigger className="hover:no-underline">

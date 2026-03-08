@@ -1,5 +1,5 @@
 import { useParams, useSearchParams } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Skeleton } from '@/components/ui/skeleton'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
@@ -40,6 +40,7 @@ export function TripDetail() {
   const [searchParams, setSearchParams] = useSearchParams()
   const activeTab = searchParams.get('tab') || 'overview'
   const { data: trip, isLoading, error } = useTrip(id!)
+  const shouldReduceMotion = useReducedMotion()
 
   const handleTabChange = (value: string) => {
     setSearchParams({ tab: value })
@@ -83,7 +84,7 @@ export function TripDetail() {
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            variants={fadeVariants}
+            variants={shouldReduceMotion ? { hidden: {}, visible: {}, exit: {} } : fadeVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
