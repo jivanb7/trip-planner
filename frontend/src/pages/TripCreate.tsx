@@ -20,13 +20,10 @@ const tripSchema = z.object({
   country: z.string().min(1, 'Country is required'),
   start_date: z.string().min(1, 'Start date is required'),
   end_date: z.string().min(1, 'End date is required'),
-  budget: z.coerce.number().min(0, 'Budget must be positive'),
+  budget: z.number().min(0, 'Budget must be positive'),
   currency: z.string().min(1, 'Currency is required'),
   trip_type: z.string().min(1, 'Trip type is required'),
   notes: z.string(),
-}).refine((data) => new Date(data.end_date) >= new Date(data.start_date), {
-  message: 'End date must be after start date',
-  path: ['end_date'],
 })
 
 type FormValues = z.infer<typeof tripSchema>
@@ -240,7 +237,7 @@ export function TripCreate() {
                         min={0}
                         step={100}
                         placeholder="5000"
-                        {...register('budget')}
+                        {...register('budget', { valueAsNumber: true })}
                       />
                       {errors.budget && (
                         <p className="text-sm text-destructive">{errors.budget.message}</p>
